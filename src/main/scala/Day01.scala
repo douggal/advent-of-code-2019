@@ -17,7 +17,21 @@ object Day01 extends App{
    */
 
   def calcFuel(m: Int): Int = {
-    m / 3 - 2
+    (m/3) - 2
+  }
+
+  def calcFuelFuel(xs: List[Int]): List[Int] = {
+    val x: Int = xs.head
+    val f = calcFuel(x)
+    f compare 0 match {
+      case -1 => xs
+      case 0 => {
+        //val stackTraceArray = Thread.currentThread.getStackTrace
+        //stackTraceArray.foreach(println)
+        xs
+      }
+      case 1 =>  calcFuelFuel(f :: xs)
+      }
   }
 
   // where am I?  where does the input data file need to be?
@@ -29,8 +43,17 @@ object Day01 extends App{
   val fuelList = massList.map(x => calcFuel(x.toInt))
   val sum = fuelList.reduceLeft(_ + _)
   println(s"Day 01 Part One:  the amount of fuel required is $sum")
+
+  val fue4fuellList = fuelList.map(x => calcFuelFuel(List(calcFuel(x.toInt))))
+  println(fue4fuellList)
+  val sumTotal = fue4fuellList.flatten.reduceLeft(_ + _)
+  println(s"Day 01 Part Two:  the amount of fuel for the fuel is $sumTotal")
+  println(s"Day 01 Part Two:  the amount of fuel required + fuel for the fuel is ${sum + sumTotal}")
+
+
   bufferedSource.close
 
-
-
 }
+/*
+
+ */
