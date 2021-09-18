@@ -19,11 +19,32 @@ object Day02 extends App {
   val lines = bufferedSource
               .getLines
               .map { line =>
-                line.split(',').map(_.toInt).toList
+                line.split(',').map(_.toInt).toArray
               }
-  for(line <- lines) {
-    val instr = line.slice(0,blockSize): List[Int]
-    println(s"$instr")
+  for(pgm <- lines) {
+
+    var i = 0
+    while (i < pgm.size) {
+      val instr = pgm.slice(i,i+blockSize).toList
+      print(s"$instr ")
+      instr(0) match {
+        case 1 => {
+          println("Add")
+          pgm(instr(3)) = pgm(instr(1)) + pgm(instr(2))
+        }
+        case 2 => {
+          println("Multiply")
+          pgm(instr(3)) = pgm(instr(1)) * pgm(instr(2))
+        }
+        case 99 => println("Exit")
+        case _ => println("Error")
+      }
+
+      i += blockSize
+    }
+    var results = pgm.toList
+    println(s"Result\n:${results}")
+    println(s"\n\n Next Case:")
   }
 
 
