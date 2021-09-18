@@ -21,9 +21,18 @@ object Day02 extends App {
               .map { line =>
                 line.split(',').map(_.toInt).toArray
               }
+
+  // loop over test data.  Test data had multiple rows and real data has only 1
   for(pgm <- lines) {
 
     var i = 0
+    //Once you have a working computer, the first step is to restore the
+    // gravity assist program (your puzzle input) to the "1202 program alarm" state
+    // it had just before the last computer caught fire. To do this, before running the program,
+    // replace position 1 with the value 12 and replace position 2 with the value 2.
+    // What value is left at position 0 after the program halts?
+    pgm(1) = 12
+    pgm(2) = 2
     while (i < pgm.length) {
       val instr = pgm.slice(i,i+blockSize).toList
       print(s"$instr ")
@@ -42,7 +51,8 @@ object Day02 extends App {
     }
     var results = pgm.toList
     println(s"Result\n:${results}")
-    println(s"\n\n Next Case:")
+    println(s"Answer Part One:  ${results(0)}")
+    //println(s"\n\n Next Case:")
   }
 
 
