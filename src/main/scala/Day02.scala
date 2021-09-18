@@ -24,18 +24,16 @@ object Day02 extends App {
   for(pgm <- lines) {
 
     var i = 0
-    while (i < pgm.size) {
+    while (i < pgm.length) {
       val instr = pgm.slice(i,i+blockSize).toList
       print(s"$instr ")
-      instr(0) match {
-        case 1 => {
+      instr.head match {
+        case 1 =>
           println("Add")
           pgm(instr(3)) = pgm(instr(1)) + pgm(instr(2))
-        }
-        case 2 => {
+        case 2 =>
           println("Multiply")
           pgm(instr(3)) = pgm(instr(1)) * pgm(instr(2))
-        }
         case 99 => println("Exit")
         case _ => println("Error")
       }
