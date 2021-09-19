@@ -16,3 +16,6 @@ Have to do separately for each mass and not work once from the fuel sum from eac
 Still not sure I understand it.
 [AoC 2019 Day 1 Part Two](https://www.reddit.com/r/adventofcode/comments/k1h4bq/2019_day_1_part_2_spits_out_right_answer_for/)
 
+#### Day 02
+Works but used imperative programming instead of FP
+
