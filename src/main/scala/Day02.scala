@@ -73,10 +73,11 @@ object Day02 extends App {
     //println(s"\n\n Next Case:")
 
     val t1 = System.nanoTime
-    for (noun <- 0 to 99)
-      for (verb <- 0 to 99) {
-        val results2 = test(clone.clone(), noun, verb)
-        if (results2 == 19690720) println(s"Found i = $noun, j = $verb.  Answer Part Two: ${100 * noun + verb}")
+    for (
+      noun <- 0 to 99;
+      verb <- 0 to 99
+    ) {
+        if (test(clone.clone(), noun, verb) == 19690720) println(s"Found i = $noun, j = $verb.  Answer Part Two: ${100 * noun + verb}")
         // break out - how?
       }
     val duration = (System.nanoTime - t1) / 1e9d
