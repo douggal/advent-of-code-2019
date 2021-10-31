@@ -37,7 +37,8 @@ object Day03 extends App {
   var wire1path = List[Tuple2[Int,Int]]()
   var wire2path = List[Tuple2[Int,Int]]()
 
-  var currLoc = (0,0)
+  wire1path = (0,0)::Nil
+  wire2path = (0,0)::Nil
 
   for (p <- wire1) {
     //print(s"${p.head},${p.tail} : ")
@@ -45,13 +46,13 @@ object Day03 extends App {
       case 'R' | 'L' =>
         val inc = if (p.head == 'R') 1 else -1
         for (x <- 1 to p.tail.toInt) {
-          currLoc = (currLoc._1 + inc, currLoc._2)
+          val currLoc = (wire1path.head._1 + inc, wire1path.head._2)
           wire1path = currLoc :: wire1path
         }
       case 'U' | 'D' => {
         val inc = if (p.head == 'U') 1 else -1
         for (x <- 1 to p.tail.toInt) {
-          currLoc = (currLoc._1, currLoc._2 + inc)
+          val currLoc = (wire1path.head._1, wire1path.head._2 + inc)
           wire1path = currLoc :: wire1path
         }
       }
@@ -59,29 +60,29 @@ object Day03 extends App {
     }
   }
 
-  currLoc = (0,0)
   for (p <- wire2) {
     //print(s"${p.head},${p.tail} : ")
     p.head match {
       case 'R' | 'L' =>
         val inc = if (p.head == 'R') 1 else -1
         for (x <- 1 to p.tail.toInt) {
-          currLoc = (currLoc._1 + inc, currLoc._2)
+          val currLoc = (wire2path.head._1 + inc, wire2path.head._2)
           wire2path = currLoc :: wire2path
         }
       case 'U' | 'D' => {
         val inc = if (p.head == 'U') 1 else -1
         for (x <- 1 to p.tail.toInt) {
-          currLoc = (currLoc._1, currLoc._2 + inc)
+          val currLoc = (wire2path.head._1, wire2path.head._2 + inc)
           wire2path = currLoc :: wire2path
         }
       }
-      case _ => var i = 0
+      case _ => println("Error")
     }
   }
 
-  val circuit1 = wire1path.toSet
-  val circuit2 = wire2path.toSet
+  // convert to Set, chop off the (0,0) starting point
+  val circuit1 = wire1path.dropRight(1).toSet
+  val circuit2 = wire2path.dropRight(1).toSet
 
   val res = circuit1.intersect(circuit2).map(p => manhattan(p)).min
 
