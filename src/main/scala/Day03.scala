@@ -13,6 +13,11 @@ object Day03 extends App {
     lines
   }
 
+  def manhattan(q: Tuple2[Int,Int]): Int = {
+    // Manhattan distance.  Starting point (p1,p2) is always (0,0)
+    q._1.abs + q._2.abs
+  }
+
   println(s"--- Day 3: Crossed Wires ---")
 
   val filename = s"Day03.txt"
@@ -24,45 +29,67 @@ object Day03 extends App {
 
   val wire1: Vector[String] = lines(0).split(",").map(_.trim).toVector
   val wire2: Vector[String] = lines(1).split(",").map(_.trim).toVector
-  println(s"Wire 1: $wire1")
-  println(s"Wire 2 $wire2")
+  //println(s"Wire 1: $wire1")
+  //println(s"Wire 2 $wire2")
 
   // brute force?  make a list of all the points each wire touches and
   // find coordinates the two lists have in common
-  var circuit = List[Tuple2[Int,Int]]()
+  var wire1path = List[Tuple2[Int,Int]]()
+  var wire2path = List[Tuple2[Int,Int]]()
 
   var currLoc = (0,0)
 
   for (p <- wire1) {
-    print(s"${p.head},${p.tail} : ")
+    //print(s"${p.head},${p.tail} : ")
     p.head match {
       case 'R' | 'L' =>
         val inc = if (p.head == 'R') 1 else -1
         for (x <- 1 to p.tail.toInt) {
           currLoc = (currLoc._1 + inc, currLoc._2)
-          circuit = currLoc :: circuit
+          wire1path = currLoc :: wire1path
         }
       case 'U' | 'D' => {
         val inc = if (p.head == 'U') 1 else -1
         for (x <- 1 to p.tail.toInt) {
           currLoc = (currLoc._1, currLoc._2 + inc)
-          circuit = currLoc :: circuit
+          wire1path = currLoc :: wire1path
         }
       }
       case _ => var i = 0
     }
   }
-  println()
-  println(circuit)
 
+  currLoc = (0,0)
+  for (p <- wire2) {
+    //print(s"${p.head},${p.tail} : ")
+    p.head match {
+      case 'R' | 'L' =>
+        val inc = if (p.head == 'R') 1 else -1
+        for (x <- 1 to p.tail.toInt) {
+          currLoc = (currLoc._1 + inc, currLoc._2)
+          wire2path = currLoc :: wire2path
+        }
+      case 'U' | 'D' => {
+        val inc = if (p.head == 'U') 1 else -1
+        for (x <- 1 to p.tail.toInt) {
+          currLoc = (currLoc._1, currLoc._2 + inc)
+          wire2path = currLoc :: wire2path
+        }
+      }
+      case _ => var i = 0
+    }
+  }
 
+  val circuit1 = wire1path.toSet
+  val circuit2 = wire2path.toSet
+
+  val res = circuit1.intersect(circuit2).map(p => manhattan(p)).min
+
+  // find points where the wires cross
 
   val duration = (System.nanoTime - t1) / 1e9d
 
-  val results = List(0)
-  println(s"Answer Part One:  ${results.head}")
+  println(s"Answer Part One:  ${res}")
   println(s"Run time (by the clock) of Part Three: $duration sec")
-
-
 
 }
