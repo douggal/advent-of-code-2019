@@ -119,7 +119,4 @@ object Day03 extends App {
   val duration = (System.nanoTime - t1) / 1e9d
   println(s"Run time (by the clock) of Part Three: $duration sec")
 
-
-
-
 }

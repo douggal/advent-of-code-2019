@@ -22,4 +22,5 @@ Still not sure I understand it.
 Works but used imperative programming instead of FP
 
 #### Day 03
-Some functional programming sytle but not all
+Some functional programming style.  Seems code could be shorter?  It works for my input.
+
