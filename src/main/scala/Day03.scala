@@ -1,5 +1,3 @@
-import scala.io.Source
-
 object Day03 extends App {
 
   // created 10/16/2021
@@ -84,13 +82,44 @@ object Day03 extends App {
   val circuit1 = wire1path.dropRight(1).toSet
   val circuit2 = wire2path.dropRight(1).toSet
 
-  val res = circuit1.intersect(circuit2).map(p => manhattan(p)).min
+  // find points where the wires cross - the intersection of the two sets
+  // then find Manhattan distance of each point in the set
+  // spread it out a bit so we have info for part 2
+  // https://alvinalexander.com/scala/union-intersection-difference-scala-sets/
+  val xpoints = circuit1.intersect(circuit2)
+  val results = xpoints.map(p => manhattan(p))
+  println(s"Answer Part One:  ${results.min}")
 
-  // find points where the wires cross
+  // Part 2:  count steps to each intersection along each wire's path
+  // find intersection with fewest ssteps to first point of intersection
+  val wire1pathrev = wire1path.reverse
+  val wire2pathrev = wire2path.reverse
+  // I surmise number of steps is equal to index of point in the wire path list
+  var steps1 = Vector[Int]()
+  var steps2 = Vector[Int]()
+
+  for (xp <- xpoints) {
+    // find index of the first occurrence of this point in circuit1
+    steps1 = steps1 :+ wire1pathrev.indexOf(xp)
+
+    // find index of the first occurrence of this point in circuit2
+    steps2 = steps2 :+ wire2pathrev.indexOf(xp)
+
+  }
+
+  println(s"wire1 ${steps1}")
+  println(s"wire2 ${steps2}")
+
+  // sum of corresponding Ints in each vector
+  // https://stackoverflow.com/questions/35064883/element-wise-sum-of-arrays-in-scala
+  val resultp2 = steps1.zip(steps2).map {case(x,y) => x+y}
+
+  println(s"Answer Part Two:  ${resultp2.min}")
 
   val duration = (System.nanoTime - t1) / 1e9d
-
-  println(s"Answer Part One:  ${res}")
   println(s"Run time (by the clock) of Part Three: $duration sec")
+
+
+
 
 }
