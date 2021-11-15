@@ -8,8 +8,8 @@ object Day04 extends App{
   println(s"--- Day 4: Secure Container ---")
 
   //val puzzleInput = "146810-612564"
-  val puzzleInput = "222688-222689" // "146810-612564"  //111123
-
+  //val puzzleInput = "111122-111123" //"146810-612564"  //111123
+  val puzzleInput = "146810-612564"  //111123
   // List[Int] list of all the numbers in puzzle input range with non-decreasing
   // digits.  Each entry is a list of digits in the number
 
@@ -50,7 +50,7 @@ object Day04 extends App{
   // for each integer in the range
   for (x <- (rangeFrom to rangeTo)) {
     // turn integer into a list of digits
-    val xs = x.toString.toList.map(_.toInt)
+    val xs = x.toString.toList.map(_.asDigit)
     // are the digits in non-decreasing order
     val inOrder = checkOrdering(xs)
     if (inOrder) {
@@ -74,22 +74,16 @@ object Day04 extends App{
     // for each digit
     for (i <- 0 to 9) {
       m(i) = 0
-        // walk down the list of digits digit at a time comparing pairs
-        for (j <- 1 to ps.length-1) {
-          println(s"${ps(j-1)} ${ps(j)}")
-          if (ps(j-1) == i && ps(j-1) == ps(j)) {
-            // if pair found the set map = 1 else more than two in a row or no match set = 0
-
-            if (m(i) >= 1) {
-              println(s"Here ${m(i)}")
-              m(i) = 0
-            } else m(i) = 1
-          }  // else do nothing no matched pair found
-        }
+      // walk down the list of digits digit at a time comparing pairs
+      for (j <- 1 to ps.length-1) {
+        if (ps(j - 1) == i && ps(j - 1) == ps(j)) {
+          // if pair found the set map = 1 else more than two in a row or no match set = 0
+            m(i) += 1
+        } else if (ps(j - 1) != ps(j)) m(i) = 0
+      }
     }
     // if any value in the Map is gt 0 then we have a winning candidate passwords
-    println(m)
-    if (m.valuesIterator.max > 0) true else false
+    if (m.valuesIterator.max == 1) true else false
   }
 
   for (p <- candidates) {
@@ -97,7 +91,10 @@ object Day04 extends App{
     if (countPairs(ps)) candidates2 += p
   }
 
+  println(candidates2)
   println(s"Answer Part Two (nbr passwords that meet single pair criteria):  ${candidates2.length}")
 
 }
 
+//You guessed 1363 - no go too high
+// 481 your answer is too low
