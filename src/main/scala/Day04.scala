@@ -8,7 +8,7 @@ object Day04 extends App{
   println(s"--- Day 4: Secure Container ---")
 
   //val puzzleInput = "146810-612564"
-  val puzzleInput = "146810-612564"  //111123
+  val puzzleInput = "222688-222689" // "146810-612564"  //111123
 
   // List[Int] list of all the numbers in puzzle input range with non-decreasing
   // digits.  Each entry is a list of digits in the number
@@ -63,6 +63,41 @@ object Day04 extends App{
   println(candidates)
 
   println(s"Answer Part One (nbr passwords that meet criteria):  ${candidates.length}")
+
+
+  val candidates2 =  new ListBuffer[Int]()
+
+  // returns true if pair found and are "not part of a larger group of matching digits"
+  def countPairs(ps: List[Int]): Boolean = {
+    // map of digits to 1 or 0.  1 = 1 or more separate pairs found, 0 = no pairs found
+    val m = scala.collection.mutable.Map[Int, Int]()
+    // for each digit
+    for (i <- 0 to 9) {
+      m(i) = 0
+        // walk down the list of digits digit at a time comparing pairs
+        for (j <- 1 to ps.length-1) {
+          println(s"${ps(j-1)} ${ps(j)}")
+          if (ps(j-1) == i && ps(j-1) == ps(j)) {
+            // if pair found the set map = 1 else more than two in a row or no match set = 0
+
+            if (m(i) >= 1) {
+              println(s"Here ${m(i)}")
+              m(i) = 0
+            } else m(i) = 1
+          }  // else do nothing no matched pair found
+        }
+    }
+    // if any value in the Map is gt 0 then we have a winning candidate passwords
+    println(m)
+    if (m.valuesIterator.max > 0) true else false
+  }
+
+  for (p <- candidates) {
+    val ps = p.toString.toList.map(_.asDigit)
+    if (countPairs(ps)) candidates2 += p
+  }
+
+  println(s"Answer Part Two (nbr passwords that meet single pair criteria):  ${candidates2.length}")
 
 }
 
