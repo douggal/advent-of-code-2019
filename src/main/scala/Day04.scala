@@ -63,7 +63,7 @@ object Day04 extends App{
       }
     }
   }
-  println(candidates)
+  //println(candidates)
 
   println(s"Answer Part One (nbr passwords that meet criteria):  ${candidates.length}")
 
@@ -73,10 +73,11 @@ object Day04 extends App{
 
   // populates a HashMap with counts (value) each digit (key)
   // input digits are guaranteed to be in non-decreasing order
+  // m is reference object so is effectively passed by reference with each call to the method
   def countPairs(ps: List[Int], m: mutable.Map[Int, Int]): Unit = {
     // compare list head to first item in list tail
     // if list is empty we're done or list is down to 1 element we're done
-    if (ps.isEmpty || ps.length == 1) ()
+    if (ps.isEmpty || ps.length == 1) ()  // we're done no pairs to count
     else {
       if (ps.head == ps.tail.head) {
         if (m.contains(ps.head)) m(ps.head) += 1
@@ -91,7 +92,8 @@ object Day04 extends App{
     val m = scala.collection.mutable.Map[Int, Int]()
     countPairs(ps, m)
     // if any digit (key) in HashMap has count of two then this string is possible password
-    if (m.values.exists(_ == 2)) true else false
+    // 1 means 1 pair, 2 means three of same digit found in a row or two pairs, etc
+    if (m.values.exists(_ == 1)) true else false
   }
 
   for (p <- candidates) {
@@ -105,4 +107,4 @@ object Day04 extends App{
 
 //You guessed 1363 - no go too high
 // 481 your answer is too low
-// 668
+// 668 too low
