@@ -1,4 +1,7 @@
+import java.awt.event.ContainerListener
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.control.TailCalls.TailRec
 
 object Day04 extends App{
 
@@ -65,36 +68,41 @@ object Day04 extends App{
   println(s"Answer Part One (nbr passwords that meet criteria):  ${candidates.length}")
 
 
-  val candidates2 =  new ListBuffer[Int]()
+  // list to be filled with candidate passwords, that is, those that meet the criteria
+  var candidates2 =  new ListBuffer[Int]()
+
+  // populates a HashMap with counts (value) each digit (key)
+  // input digits are guaranteed to be in non-decreasing order
+  def countPairs(ps: List[Int], m: mutable.Map[Int, Int]): Unit = {
+    // compare list head to first item in list tail
+    // if list is empty we're done or list is down to 1 element we're done
+    if (ps.isEmpty || ps.length == 1) ()
+    else {
+      if (ps.head == ps.tail.head) {
+        if (m.contains(ps.head)) m(ps.head) += 1
+        else m += (ps.head -> 1)
+      }
+      countPairs(ps.tail, m)
+    }
+  }
 
   // returns true if pair found and are "not part of a larger group of matching digits"
-  def countPairs(ps: List[Int]): Boolean = {
-    // map of digits to 1 or 0.  1 = 1 or more separate pairs found, 0 = no pairs found
+  def testCandidate(ps: List[Int]): Boolean = {
     val m = scala.collection.mutable.Map[Int, Int]()
-    // for each digit
-    for (i <- 0 to 9) {
-      m(i) = 0
-      // walk down the list of digits digit at a time comparing pairs
-      for (j <- 1 to ps.length-1) {
-        if (ps(j - 1) == i && ps(j - 1) == ps(j)) {
-          // if pair found the set map = 1 else more than two in a row or no match set = 0
-            m(i) += 1
-        } else if (ps(j - 1) != ps(j)) m(i) = 0
-      }
-    }
-    // if any value in the Map is gt 0 then we have a winning candidate passwords
-    if (m.valuesIterator.max == 1) true else false
+    countPairs(ps, m)
+    // if any digit (key) in HashMap has count of two then this string is possible password
+    if (m.values.exists(_ == 2)) true else false
   }
 
   for (p <- candidates) {
     val ps = p.toString.toList.map(_.asDigit)
-    if (countPairs(ps)) candidates2 += p
+    if (testCandidate(ps)) candidates2 += p
   }
 
   println(candidates2)
   println(s"Answer Part Two (nbr passwords that meet single pair criteria):  ${candidates2.length}")
-
 }
 
 //You guessed 1363 - no go too high
 // 481 your answer is too low
+// 668
