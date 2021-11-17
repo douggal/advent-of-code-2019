@@ -9,7 +9,8 @@ My solution to each day's puzzles.  In Scala unless otherwise noted.
 
 1. Day  1:  The Tyranny of the Rocket Equation
 2. Day  2:  1202 Program Alarm
-3. Day  3: Crossed Wires
+3. Day  3:  Crossed Wires
+4. Day  4:  Secure Container
 
 ### Notes
 #### Day 01
@@ -19,8 +20,10 @@ Still not sure I understand it.
 [AoC 2019 Day 1 Part Two](https://www.reddit.com/r/adventofcode/comments/k1h4bq/2019_day_1_part_2_spits_out_right_answer_for/)
 
 #### Day 02
-Works but used imperative programming instead of FP
+Works but used imperative programming style instead of FP
 
 #### Day 03
 Some functional programming style.  Seems code could be shorter?  It works for my input.
 
+#### Day 04
+Pulled in some tail recursion
