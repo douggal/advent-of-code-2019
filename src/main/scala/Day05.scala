@@ -15,33 +15,57 @@ object Day05 extends App{
   val filename = "Day02.txt"
   val bufferedSource = scala.io.Source.fromFile(filename)
 
+  val systemID = 1 // the ship's air conditioner unit
+
   // Intcode 2000 an implementation of an Intcode computer
   def Intcode2000(pgm: Array[Int]): Array[Int] = {
-    // blockSize = width of opcode + its  operand(s) + storage address
-    val blockSize = HashMap((0->1),(1->4),(2->4),(99->1))  //.withDefaultValue("Not found")
+    // blockSize = width of instruction (opcode + its  operand(s) + storage address)
+    val blockSize = HashMap((0->1),(1->4),(2->4),(3->2),(4->2),(99->1))  //.withDefaultValue("Not found")
 
     var ip = 0
     var exit: Boolean = false
     while (ip < pgm.length & !exit) {
-      val instr = pgm.slice(ip,ip+blockSize(pgm(ip))).toList
-      //println(s"$instr => block size ${blockSize(pgm(ip))}")
-      instr.head match {
+      val lineOfCode = pgm.slice(ip,ip+blockSize(pgm(ip))).toList
+      println(s"$lineOfCode => block size ${blockSize(pgm(ip))}")
+      /*
+      ABCDE
+       1002
+
+        DE - two-digit opcode,      02 == opcode 2
+         C - mode of 1st parameter,  0 == position mode
+         B - mode of 2nd parameter,  1 == immediate mode
+         A - mode of 3rd parameter,  0 == position mode,
+                                          omitted due to being a leading zero
+      */
+      // represent instruction as 5 char string with leading spaces padded with '0's
+      val instr = f"${lineOfCode.head}%05d"
+      val opcode = (instr(3).asDigit.toString + instr(4).asDigit.toString).toInt
+      // modes in order, i.e., modes(0) = mode of 1st param, etc
+      // mode 0 = position mode
+      // mode 1 = immediate mode
+      val modes = Vector[Int](instr(2).asDigit,instr(1).asDigit,instr(0).asDigit)
+
+      opcode match {
         case 1 =>
           // println("Add")
           pgm(instr(3)) = pgm(instr(1)) + pgm(instr(2))
         case 2 =>
           // println("Multiply")
           pgm(instr(3)) = pgm(instr(1)) * pgm(instr(2))
-        case 3 => ???
-        case 4 => ???
+        case 3 =>
+          //println("Input")
+          val paramDirection = 0
+        case 4 =>
+          //println(Output)
+          val paramDirection = 0
         case 99 =>
           // println("Exit")
           exit = true
         case _ =>
-          println("Error")
+          println(s"Error opcode ip ${ip}, $opcode, modes $modes")
           exit = true
       }
-      ip += blockSize(instr.head)
+      ip += blockSize(opcode)
     }
     pgm
   }

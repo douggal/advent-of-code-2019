@@ -5,7 +5,7 @@ Created:  Autumn 2021
 
 Advent of Code Website:  [Advent of Code](https://adventofcode.com)
 
-My solution to each day's puzzles.  In Scala v3.1 unless otherwise noted.
+My solution to each day's puzzles.  In Scala v2.13.6 unless otherwise noted.
 
 1. Day  1:  The Tyranny of the Rocket Equation
 2. Day  2:  1202 Program Alarm
