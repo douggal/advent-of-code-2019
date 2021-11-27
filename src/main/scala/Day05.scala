@@ -31,9 +31,17 @@ object Day05 extends App{
     var ip = 0
     var exit: Boolean = false
     while (ip < pgm.length & !exit) {
-      val lineOfCode = pgm.slice(ip,ip+blockSize(pgm(ip))).toList
-      //println(s"ip $ip : line of code = $lineOfCode : block size ${blockSize(pgm(ip))}")
+      //print(s"ip $ip : next7 = ${pgm.slice(ip,ip+7).toList}:  ")
+
+      // represent instruction as 5 char string with leading spaces padded with '0's
+      val instr = f"${pgm(ip)}%05d"
+      val opcode = (instr(3).asDigit.toString + instr(4).asDigit.toString).toInt
+
+      val lineOfCode = pgm.slice(ip,ip+blockSize(opcode)).toList
+
+      //println(s" ip $ip : line of code = $lineOfCode : block size ${blockSize(opcode)} ")
       /*
+      get the parameter modes, defined as follows:
       ABCDE
        1002
 
@@ -43,10 +51,7 @@ object Day05 extends App{
          A - mode of 3rd parameter,  0 == position mode,
                                           omitted due to being a leading zero
       */
-      // represent instruction as 5 char string with leading spaces padded with '0's
-      val instr = f"${lineOfCode.head}%05d"
-      val opcode = (instr(3).asDigit.toString + instr(4).asDigit.toString).toInt
-      // modes in order they appear, i.e., modes(0) = mode of 1st param, etc
+      // Vector of modes parallel to parameter order, i.e., modes(0) = mode of 1st param, etc
       // mode 0 = position mode parameter is interpreted as a address
       // mode 1 = immediate mode parameter is interpreted as a value
       val modes = Vector[Int](instr(2).asDigit,instr(1).asDigit,instr(0).asDigit)
@@ -69,13 +74,14 @@ object Day05 extends App{
           val a = scala.io.StdIn.readInt()
           pgm(lineOfCode(1)) = a
         case 4 =>
-          //println(Output) take one parameter and prints it
-          println(s"ip $ip: ${pgm(lineOfCode(3))}")
+          //println(Output) take one parameter an address and outputs value at the address
+          // cannot be in immediate mode
+          println(s"ip $ip: ${pgm(lineOfCode(1))}")
         case 99 =>
-          // println("Exit")
+          println("Halt")
           exit = true
         case _ =>
-          //println(s"Error ip ${ip}, lineOfCode $lineOfCode, opcode $opcode, modes $modes")
+          println(s"Error ip $ip, lineOfCode $lineOfCode, opcode $opcode, modes $modes")
           exit = true
       }
       ip += blockSize(opcode)
@@ -95,18 +101,22 @@ object Day05 extends App{
   // Test data file had multiple rows but real data has only 1 row
   for(pgm <- lines) {
 
-    val clone = pgm.clone
+    /*
+    The TEST diagnostic program will start by requesting from the user the ID of the
+    system to test by running an input instruction - provide it 1, the ID for the
+    ship's air conditioner unit.
 
-    //Once you have a working computer, the first step is to restore the
-    // gravity assist program (your puzzle input) to the "1202 program alarm" state
-    // it had just before the last computer caught fire. To do this, before running the program,
-    // replace position 1 with the value 12 and replace position 2 with the value 2.
-    // What value is left at position 0 after the program halts?
-    pgm(1) = 12
-    pgm(2) = 2
+    It will then perform a series of diagnostic tests confirming that various
+    parts of the Intcode computer, like parameter modes, function correctly.
+    For each test, it will run an output instruction indicating how far the result
+    of the test was from the expected value, where 0 means the test was successful.
+    Non-zero outputs mean that a function is not working correctly; check the
+    instructions that were run before the output instruction to see which one failed.
+    */
     val results = Intcode2000(pgm).toList
-    //println(s"Result\n:${results}")
-    println(s"Answer Part One:  ${results.head}")
+
+    println(s"Result\n:$results")
+    println(s"Answer Part One:  the output immediately before the 'Halt'")
     //println(s"\n\n Next Case:")
 
   }
