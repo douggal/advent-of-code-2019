@@ -20,13 +20,14 @@ object Day05 extends App{
   // Intcode 2000 an implementation of an Intcode computer
   def Intcode2000(pgm: Array[Int]): Array[Int] = {
     // blockSize = width of instruction (opcode + its  operand(s) + storage address)
+
     val blockSize = HashMap((0->1),(1->4),(2->4),(3->2),(4->2),(99->1))  //.withDefaultValue("Not found")
 
     var ip = 0
     var exit: Boolean = false
     while (ip < pgm.length & !exit) {
       val lineOfCode = pgm.slice(ip,ip+blockSize(pgm(ip))).toList
-      println(s"$lineOfCode => block size ${blockSize(pgm(ip))}")
+      //println(s"ip $ip : line of code = $lineOfCode : block size ${blockSize(pgm(ip))}")
       /*
       ABCDE
        1002
@@ -40,29 +41,37 @@ object Day05 extends App{
       // represent instruction as 5 char string with leading spaces padded with '0's
       val instr = f"${lineOfCode.head}%05d"
       val opcode = (instr(3).asDigit.toString + instr(4).asDigit.toString).toInt
-      // modes in order, i.e., modes(0) = mode of 1st param, etc
-      // mode 0 = position mode
-      // mode 1 = immediate mode
+      // modes in order they appear, i.e., modes(0) = mode of 1st param, etc
+      // mode 0 = position mode parameter is interpreted as a address
+      // mode 1 = immediate mode parameter is interpreted as a value
       val modes = Vector[Int](instr(2).asDigit,instr(1).asDigit,instr(0).asDigit)
 
       opcode match {
         case 1 =>
-          // println("Add")
-          pgm(instr(3)) = pgm(instr(1)) + pgm(instr(2))
+          // println("Add") takes 2 parameters or operands
+          val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
+          val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
+          pgm(lineOfCode(3)) = op1 + op2
         case 2 =>
-          // println("Multiply")
-          pgm(instr(3)) = pgm(instr(1)) * pgm(instr(2))
+          // println("Multiply") takes 2 operands
+          val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
+          val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
+          pgm(lineOfCode(3)) = op1 * op2
         case 3 =>
-          //println("Input")
-          val paramDirection = 0
+          //println("Input") takes one parameter and saves it this address
+          // get the input from user
+          print("Enter input: ")
+          val a = scala.io.StdIn.readInt()
+          val op1 = if (modes(0)==0) pgm(a) else a
+          pgm(lineOfCode(3)) = op1
         case 4 =>
-          //println(Output)
-          val paramDirection = 0
+          //println(Output) take one parameter and prints it
+          println(s"ip $ip: ${pgm(lineOfCode(3))}")
         case 99 =>
           // println("Exit")
           exit = true
         case _ =>
-          println(s"Error opcode ip ${ip}, $opcode, modes $modes")
+          //println(s"Error ip ${ip}, lineOfCode $lineOfCode, opcode $opcode, modes $modes")
           exit = true
       }
       ip += blockSize(opcode)
@@ -101,16 +110,6 @@ object Day05 extends App{
     println(s"Answer Part One:  ${results(0)}")
     //println(s"\n\n Next Case:")
 
-    val t1 = System.nanoTime
-    for (
-      noun <- 0 to 99;
-      verb <- 0 to 99
-    ) {
-      if (test(clone.clone(), noun, verb) == 19690720) println(s"Found i = $noun, j = $verb.  Answer Part Two: ${100 * noun + verb}")
-      // break out - how?
-    }
-    val duration = (System.nanoTime - t1) / 1e9d
-    println(s"Duration of Part Two: $duration sec")
   }
 
 
