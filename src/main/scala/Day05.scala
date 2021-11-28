@@ -14,7 +14,7 @@ object Day05 extends App{
 
   println(s"--- Day 5: Sunny with a Chance of Asteroids ---")
 
-  val filename = "Day05.txt"
+  val filename = "Day05test.txt"
   val bufferedSource = scala.io.Source.fromFile(filename)
   val lines = bufferedSource
     .getLines
@@ -24,11 +24,21 @@ object Day05 extends App{
 
   val systemID = 1 // the ship's air conditioner unit
 
+  def dumpStack(stack: ListBuffer[List[Int]]):Unit = {
+    println("Dumping stack")
+    for (item <- stack) println(item)
+  }
+
+  def dumpPgm(program: Array[Int]):Unit = {
+    println("Dumping program")
+    for (item <- program) print(item)
+  }
+
   // Intcode 2000: an implementation of an Intcode computer
   def Intcode2000(pgm: Array[Int]): Array[Int] = {
     // blockSize = width of instruction (opcode + its  operand(s) + storage address)
 
-    val blockSize = HashMap(0->1,1->4,2->4,3->2,4->2,99->1)  //.withDefaultValue("Not found")
+    val blockSize = HashMap(0->1,1->4,2->4,3->2,4->2,5->3,6->3,7->4,8->4,99->1)  //.withDefaultValue("Not found")
     val stack = ListBuffer[List[Int]]()
     var ip = 0
     var exit: Boolean = false
@@ -65,11 +75,13 @@ object Day05 extends App{
           val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
           val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
           pgm(lineOfCode(3)) = op1 + op2
+          ip += blockSize(opcode)
         case 2 =>
           // println("Multiply") takes 2 operands
           val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
           val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
           pgm(lineOfCode(3)) = op1 * op2
+          ip += blockSize(opcode)
         case 3 =>
           //println("Input") takes one parameter and saves it this address
           // get the input from user
@@ -77,6 +89,7 @@ object Day05 extends App{
           print("Enter input: ")
           val a = scala.io.StdIn.readInt()
           pgm(lineOfCode(1)) = a
+          ip += blockSize(opcode)
         case 4 =>
           //println(Output) take one parameter an address and outputs value at the address
           // cannot be in immediate mode
@@ -85,6 +98,43 @@ object Day05 extends App{
 //            println("Not 0 output:  dumping stack")
 //            for (item <- stack) println(item)
 //          }
+          ip += blockSize(opcode)
+        case 5 =>
+          // jump-if-true
+          val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
+          if (op1 != 0) {
+            val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
+            ip = op2
+          } else ip += blockSize(opcode)
+        case 6 =>
+          //jump-if-false
+          val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
+          if (op1 == 0) {
+            val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
+            ip = op2
+          } else  ip += blockSize(opcode)
+        case 7 =>
+          // less than
+          val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
+          val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
+          val op3 = if (modes(2)==0) pgm(lineOfCode(3)) else lineOfCode(3)
+          if (op1 < op2) {
+            pgm(op3) = 1
+          } else {
+            pgm(op3) = 0
+          }
+          ip += blockSize(opcode)
+        case 8 =>
+          // equal
+          val op1 = if (modes(0)==0) pgm(lineOfCode(1)) else lineOfCode(1)
+          val op2 = if (modes(1)==0) pgm(lineOfCode(2)) else lineOfCode(2)
+          val op3 = if (modes(2)==0) pgm(lineOfCode(3)) else lineOfCode(3)
+          if (op1 == op2) {
+            pgm(op3) = 1
+          } else {
+            pgm(op3) = 0
+          }
+          ip += blockSize(opcode)
         case 99 =>
           println("Halt")
           exit = true
@@ -92,8 +142,9 @@ object Day05 extends App{
           println(s"Error ip $ip, lineOfCode $lineOfCode, opcode $opcode, modes $modes")
           exit = true
       }
-      ip += blockSize(opcode)
     }
+    dumpStack(stack)  //debug
+    dumpPgm(pgm)
     pgm
   }
 
