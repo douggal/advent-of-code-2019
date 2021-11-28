@@ -5,12 +5,13 @@ Created:  Autumn 2021
 
 Advent of Code Website:  [Advent of Code](https://adventofcode.com)
 
-My solution to each day's puzzles.  In Scala unless otherwise noted.
+My solution to each day's puzzles.  In Scala v2.13.6 unless otherwise noted.
 
 1. Day  1:  The Tyranny of the Rocket Equation
 2. Day  2:  1202 Program Alarm
 3. Day  3:  Crossed Wires
 4. Day  4:  Secure Container
+5. Day  5:  Sunny with a Chance of Asteroids
 
 ### Notes
 #### Day 01
@@ -27,3 +28,8 @@ Some functional programming style.  Seems code could be shorter?  It works for m
 
 #### Day 04
 Pulled in some tail recursion
+
+#### Day 05
+I too found the instructions confusing. I read them over and over. I first thought the task was to find errors in the 
+input file, but finally realized it is just to validate the intcode 
+computer program I wrote by getting all the tests to pass.
