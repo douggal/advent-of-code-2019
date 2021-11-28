@@ -30,3 +30,6 @@ Some functional programming style.  Seems code could be shorter?  It works for m
 Pulled in some tail recursion
 
 #### Day 05
+I too found the instructions confusing. I read them over and over. I first thought the task was to find errors in the 
+input file, but finally realized it is just to validate the intcode 
+computer program I wrote by getting all the tests to pass.

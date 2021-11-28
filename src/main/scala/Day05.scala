@@ -1,3 +1,5 @@
+import scala.collection.mutable.ListBuffer
+
 object Day05 extends App{
 
   import scala.collection.immutable.HashMap
@@ -27,7 +29,7 @@ object Day05 extends App{
     // blockSize = width of instruction (opcode + its  operand(s) + storage address)
 
     val blockSize = HashMap(0->1,1->4,2->4,3->2,4->2,99->1)  //.withDefaultValue("Not found")
-
+    val stack = ListBuffer[List[Int]]()
     var ip = 0
     var exit: Boolean = false
     while (ip < pgm.length & !exit) {
@@ -38,6 +40,7 @@ object Day05 extends App{
       val opcode = (instr(3).asDigit.toString + instr(4).asDigit.toString).toInt
 
       val lineOfCode = pgm.slice(ip,ip+blockSize(opcode)).toList
+      stack.prepend(lineOfCode)
 
       //println(s" ip $ip : line of code = $lineOfCode : block size ${blockSize(opcode)} ")
       /*
@@ -70,13 +73,18 @@ object Day05 extends App{
         case 3 =>
           //println("Input") takes one parameter and saves it this address
           // get the input from user
+          // cannot be in immediate mode
           print("Enter input: ")
           val a = scala.io.StdIn.readInt()
           pgm(lineOfCode(1)) = a
         case 4 =>
           //println(Output) take one parameter an address and outputs value at the address
           // cannot be in immediate mode
-          println(s"ip $ip: ${pgm(lineOfCode(1))}")
+          if (modes(0)==0) println(s"ip $ip: ${pgm(lineOfCode(1))}") else lineOfCode(1)
+//          if (pgm(lineOfCode(1)) != 0) {
+//            println("Not 0 output:  dumping stack")
+//            for (item <- stack) println(item)
+//          }
         case 99 =>
           println("Halt")
           exit = true
@@ -115,7 +123,7 @@ object Day05 extends App{
     */
     val results = Intcode2000(pgm).toList
 
-    println(s"Result\n:$results")
+    //println(s"Result\n:$results")
     println(s"Answer Part One:  the output immediately before the 'Halt'")
     //println(s"\n\n Next Case:")
 
